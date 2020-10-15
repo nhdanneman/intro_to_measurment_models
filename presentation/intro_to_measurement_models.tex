@@ -1,0 +1,544 @@
+\documentclass{beamer}
+\usepackage{xcolor}
+\usepackage{makecell}
+\usepackage{array}
+\usepackage{ragged2e}
+\newcolumntype{P}[1]{>{\RaggedRight\hspace{0pt}}p{#1}}
+\begin{document}
+\title{Intro to Measurement Models}   
+\author{Nathan Danneman} 
+\date{\today} 
+
+\logo{%
+    \includegraphics[width=1.5cm,height=1cm,keepaspectratio]{dm_logo}
+}
+
+\frame{\titlepage} 
+
+%\-\hspace{1cm}  indented text
+
+
+\frame{
+\frametitle{A Brief Intro to Measurement Models}
+This talk aims to introduce you to the theory and practice of \textit{measurement models}.\\
+\bigskip\bigskip
+Overview:
+\begin{enumerate}
+\item Theory: what is a measurement model
+\item Bayesian estimation (just a smidge)
+\item Practice: estimation in R+JAGS
+\end{enumerate}
+\bigskip\bigskip
+Presumes:
+\begin{itemize} 
+\item Moderate stats knowledge
+\item Working knowledge of R
+\end{itemize} 
+}
+
+
+\frame{
+\frametitle{What is a Measurement Model?}
+
+Most broadly, measurement models are concerned with estimating latent variables from observed variables theorized to cause or be effected by those latent variables.\\
+\bigskip
+They are useful for quantifying concepts whose causes or consequences are observable/measurable, but that are not themselves measurable directly.\\
+\bigskip
+Example: Math aptitude
+\begin{itemize}
+\item Causes:
+\begin{itemize}
+\item math classes
+\end{itemize}
+\item Consequences:
+\begin{itemize}
+\item test scores
+\end{itemize}
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{More Examples}
+This class of models is really common in social sciences, especially psychology. The encompassing family of methods is called Structural Equation Modeling.\\
+\bigskip
+Some latent variables:
+\begin{itemize}
+\item democracy
+\item intelligence
+\item perceived health
+\item ideology
+\end{itemize}
+\bigskip
+Your own examples?
+
+}
+\frame{
+\frametitle{What's Needed}
+For our purposes, I'll be making some simplifying assumptions:
+\bigskip
+\begin{enumerate}
+\item You've got exactly one latent variable.\\ \textit{Moderately important, and hard to validate empirically}
+\item You have more than one other variable.\\ \textit{Pretty trivial}
+\item You know whether your indicators cause, or are caused by, your latent variable.\\ \textit{Outside of this, you need full-on SEM, which is out of scope for this talk}
+\end{enumerate}
+
+}
+
+
+\frame{
+\frametitle{Visual: Theory}
+Suppose you think variables x$_{1:3}$ cause latent variable $\eta$, which causes observed outcomes y$_{1:2}$ in each of i$\in$N observations.
+\begin{center}
+\includegraphics[width=9cm]{ex_theory}
+\end{center}
+}
+\frame{
+\frametitle{Visual: Estimates}
+The data (inputs) are X (Nx3) and Y (Nx2).\\
+The estimates are W (5) and $\eta$ (Nx1)
+\begin{center}
+\includegraphics[width=9cm]{ex_estimates}
+\end{center}
+Note: We may be centrally interested in $\eta$ and/or w, for inference over these observations, theory-testing, or future prediction.
+}
+
+\frame{
+\frametitle{Bayesian Estimation, in Brief}
+In broad terms, Bayesian estimation involves multiplying the likelihood of seeing some data by a prior.\\
+\medskip
+Multiplication sounds easy, but both of those things are \textit{distributions}.\\
+\medskip
+Plus, they are complicated distributions over parameter estimates. This would mean taking difficult, or impossible, integrals.\\
+\medskip
+Instead, it's frequently possible to \textit{sample} from the \textit{marginal} distributions of parameters.
+
+}
+
+
+\frame{
+\frametitle{Sampling}
+Markov Chain Monte Carlo (MCMC) is a common method for sampling from marginal distributions.\\
+\bigskip
+Idea: Given the data and estimates of all other values, sample from the distribution of values for some parameter. Continue this until you have lots of samples for all the parameters, one at a time.\\
+\bigskip
+In practice, there are lots of better ways to do this, but that's what JAGS/BUGS does under the hood.
+}
+
+\frame{
+\frametitle{Workflow}
+The user specifies:
+\begin{itemize}
+\item Data
+\item Likelihoods (as distributions) and relationships between variables
+\item Priors for parameters
+\end{itemize}
+\bigskip
+User checks for convergence (more later).
+}
+
+
+\begin{frame}[fragile]
+\frametitle{JAGS}
+JAGS: Just Another Gibbs Sampler\\
+\bigskip
+Handles figuring out the distribution(s) to sample from, and does the sampling. MAGIC\\
+
+\begin{verbatim}
+http://mcmc-jags.sourceforge.net/
+\end{verbatim}
+\end{frame}
+
+\frame{
+\frametitle{}
+}\frame{
+\frametitle{}
+}\frame{
+\frametitle{}
+}
+\frame{
+\frametitle{}
+}
+
+%\frame{
+%\frametitle{Acknowledgements}
+%Big thanks to:
+%\begin{itemize}
+%\item BSides Asheville
+%\item Data Machines (www.datamachines.io)
+%\item Uncle Sam
+%\end{itemize}
+%\bigskip \bigskip \bigskip
+% \textcolor{gray}{This research was developed with funding from the Defense Advanced Research Projects Agency (DARPA).} \\
+% \bigskip
+% \textcolor{gray}{The views, opinions and/or findings expressed are those of the author and should not be interpreted as representing the official views or policies of the Department of Defense or the U.S. Government.}
+%
+%}
+%
+%
+%\frame{
+%\frametitle{Outline}
+%\begin{enumerate} 
+%\item ``Big data'' and analytics for cyber defense \\
+%\item RuleBreaker: how it works \\
+%\item RuleBreaker: security relevance, use cases \\
+%\item Next steps, etc.
+%\end{enumerate}
+%}
+%
+%
+%\frame{
+%\frametitle{Defensive Analytics I: Rules}
+%Idea: Encode knowledge about known TTPs as rules.\\
+%\bigskip
+%\begin{itemize}
+%\item e.g. Snort \\
+%\item If (ip AND port OR domain) then (block/report/etc) \\
+%\pause
+%\item Pros: understandable, targeted, fast (to implement and execute)\\
+%\item Cons: simplistic; known-knowns; short shelf-life
+%\end{itemize}
+%}
+%
+%
+%\frame{
+%\frametitle{Defensive Analytics II: Statistical Pattern Matching}
+%Idea: Train a model to differentiate malicious cases from safe ones.\\
+%\bigskip
+%\begin{itemize}
+%\item e.g. FireEye \\
+%\item Statistical model separating, e.g., malware-containing .doc(x) from safe examples
+%\pause
+%\item Pros: targeted, accurate \\
+%\item Cons: need training data; uninterpretable models; short shelf-life; need many models to achieve broad coverage
+%\end{itemize}
+%}
+%
+%\frame{
+%\frametitle{Defensive Analytics III: Statistical Anomaly Detection}
+%Idea: Use a statistical model to highlight anomalous activity.\\
+%\bigskip
+%\begin{itemize}
+%\item e.g. IronNet \\
+%\item Either model normalcy and alert on deviations, or directly estimate ``anomalousness''
+%\pause
+%\item Pros: dynamic models; per-environment customization; detect unknowns  \\
+%\item Cons: noisy; definition of ``anomaly'' implies algo implies variance in results; uninterpretable
+%\end{itemize}
+%}
+%
+%
+%\frame{
+%\frametitle{Best of All Worlds?}
+%RuleBreaker attempts to get some of the power of each approach, while avoiding each one's pitfalls.\\
+%\bigskip
+%
+%Idea: generate simplified models of normalcy in the form of probabilistic rules.
+%
+%\bigskip
+%\begin{itemize}
+%\item Dynamism and `unknown unknowns' of anomaly detection \\
+%\item Interpretability of rules \\
+%\item Accuracy of statistical pattern matching
+%\end{itemize}
+%
+%}
+%
+%
+%\frame{
+%\frametitle{Motivation}
+%Network data, through RFCs and convergent usage patterns, often includes strong interdependencies between fields.
+%\bigskip
+%\begin{itemize} 
+%\item File extensions imply mime\_type.\\
+%\item Port 53 traffic + AAAA record implies range of return bytes.\\
+%\item Port number correlates strongly with protocol.
+%\end{itemize}
+%\bigskip
+%Idea: Automatically identify strong, categorical correlations to \textcolor{red}{learn about a network}. \\
+%\bigskip
+%Then, find observations that break them, to \textcolor{red}{identify anomalies}.
+%}
+%
+%\frame{
+%\frametitle{Further Motivation}
+%
+% \begin{overlayarea}{\textwidth}{0.23\textheight}
+% \visible<1>{
+%\includegraphics[width=1.9cm]{thinking_face}
+%\end{overlayarea}
+%}
+%\visible<1->{
+%Can't we just use SQL to find these?
+%}
+%\visible<2->{
+%\begin{itemize}
+%\item Yes, \emph{if you already know} what mis-matches you're looking for
+%\item Yes, \emph{if there are few mis-matches} you care about
+%\end{itemize}
+%}
+%
+%\bigskip
+%\visible<3->{
+%Hey, isn't this just anomaly detection?
+%\begin{itemize}
+%\item Yes-ish.
+%\item Optimized for categorical data
+%\item Performant in the face of irrelevant variables
+%\item Focused on `near-misses'
+%\end{itemize}
+%}
+%}
+%
+%
+%\frame{
+%\frametitle{The Language of Rules}
+%RuleBreaker thinks of categorical correlations as \emph{rules}.\\
+%\bigskip
+%Example: if DNS, then port 53 with probability 98\%.\\
+%\bigskip
+%These are \emph{descriptive} rather than \emph{normative}; they are identified from data.\\
+%\bigskip
+%Rules have three parts: predicate, consequent, and (conditional) likelihood.
+%
+%}
+%
+%
+%\frame{\frametitle{Inducing Rules from Data}
+%Association Rule Mining is the task of identifying antecedent sets that are highly likely to imply consequents.\\ 
+%\textcolor{gray}{(ie. find strong correlations in categorical data)}\\
+%\bigskip
+%Originated with market basked analysis\\
+%\textcolor{gray}{(bread + peanut butter $=>$ jelly)}\\
+%\textcolor{gray}{see Agrawal, Imielinski, and Swami (1993)}\\
+%\bigskip
+%Task involves first identifying frequent itemsets \\
+%\textcolor{gray}{(bread, peanut butter, jelly)}\\
+%\bigskip
+%Next, you use those itemsets to identify high-confidence rules\\
+%\textcolor{gray}{ \{bread, peanut butter $=>$ jelly 99\% of the time \} }
+%}
+%
+%\frame{\frametitle{Identifying Frequent Itemsets}
+%
+%A \textcolor{red}{Frequent Itemset} is a set (group of levels of variables) that occurs with higher than S(upport) frequency in a database.\\
+%\bigskip
+%FP-Growth \textcolor{gray}{(Han et al, 2000)}
+%\begin{itemize}
+%\item Scan database ONCE to find (sorted list) of frequent items
+%\item Grow a tree based on order of frequency
+%\item Use the tree structure to rapidly identify frequent itemsets without candidate generation
+%%\item Check for confidence of rules made from binary partitions of itemsets
+%\end{itemize}
+%}
+%
+%
+%\frame{\frametitle{Identifying Rules from Frequent Itemsets}
+%A \textcolor{red}{Rule} is a unary split of a set where the likelihood of the consequent given the predicate in the dataset has a minimum \emph{confidence} (percentage).\\
+%\bigskip
+%
+%Itemset: \{A,B,C\}\\
+%Unary split: \{A,C\}, \{B\}\\
+%Rule: If \{A,C\} then \{B\} with probability 96\%\\
+%\bigskip
+%
+%Rule Induction:
+%Generate unary splits of all frequent itemsets, and check the resulting conditional probabilities in the database.
+%}
+%
+%
+%\frame{\frametitle{Why Do We Care?}
+%
+%Learn about \textcolor{red}{patterns} in the network:\\
+%
+%\begin{itemize}
+%\item DNS running over an atypical port
+%\item Services associated with username-types
+%\item Note proxies
+%\end{itemize}
+%
+%\bigskip
+%
+%Identify \textcolor{red}{discrepancies}.\\
+%E.g. ``IF port=53 THEN protocol=`dns' 99.7\% of cases.''~~~~~(rule)\\
+%1.2.3 sent icmp traffic to 4.5.6 over port 53.~~~~~~~~~~~~~~~~(breakage)
+%
+%}
+%
+%\frame{\frametitle{How to Generate Security-Relevant Rules}
+%
+%At a high level, RuleBreaker is anomaly detection. \\
+%
+%\bigskip
+%
+%How can we induce \textcolor{red}{relevant} rule?
+%
+%\begin{itemize}
+%\item Choose the right features
+%\item Make sure the rules are statistically sound
+%\item Automate the dropping of uninteresting rules
+%\end{itemize}
+%
+%}
+%
+%
+%
+%\begin{frame}
+%\frametitle{Security-Relevant Rules and Breakages: Features}
+%\begin{center}
+%\begin{tabular}{ P{3.5cm} | P{7cm} }
+% Features  &  Rationale \\ 
+% \hline \hline
+% 
+% \makecell[l]{usernames\\source/dest ips} & Identify patterns and discrepancies in login locations \\
+% \hline
+% \makecell[l]{sourceIP\\destIP\\destPort} &Identify common connection patterns and anomalies (possible internal probing) \\
+% \hline
+%user agent tokens & Identify bogus UAs \\
+% \hline
+% \makecell[l]{(inferred) file type\\file extension} & File maqeurading \\
+% \hline 
+% \makecell[l]{destination port\\(inferred) protocol} & Atypical connections \\
+% \hline 
+% \makecell[l]{HTTP Method\\(inferred) file type} & e.g. ``POST'' to images, CSS \\
+% \hline 
+%
+%\end{tabular}
+%\end{center}
+%
+%\end{frame}
+%
+%
+%\begin{frame}
+%\frametitle{Identifying Security-Relevant Anomalies: Metrics}
+%Not all rules are \textcolor{red}{statistically interesting}.\\
+%\bigskip
+%Consider the rule: If A, then B. \\
+%\bigskip
+%Confidence: $\frac{Support(A~and~B) }{Support(A)}$\\ 
+%\medskip
+%\textcolor{gray}{equivalently: pr(B$\vert$A)} \\
+%\pause
+%
+%\bigskip
+%Lift: $\frac{Support(A~and~B)}{Support(A) ~* ~Support(B)}$ \\
+%\medskip
+%\textcolor{gray}{penalizes common B's }
+%
+%\end{frame}
+%
+%
+%\frame{
+%\frametitle{Confidence vs Lift}
+%\includegraphics[width=10cm]{venn}
+%
+%}
+%
+%
+%\begin{frame}[fragile]
+%\frametitle{Identifying Security-Relevant Anomalies: Rule Pruning}
+%Not all breakages or all rules are \textcolor{red}{relevant}.\\
+%\bigskip
+%Rule: if mime\_type is text/html, extension is .html with probability 0.98 \\
+%\medskip
+%Breakage: a row with mime\_type text/html and extension .txt \\
+%
+%\bigskip
+%We implemented an \emph{exceptions list} that allows rule-and-breakage sets to be omitted from findings list.  These specify the match criteria (Any, Equals, Contains, Regex), and the three portions of a finding (predicate, consequent, and breakage).\\
+%\medskip
+%
+%Example:
+%\begin{verbatim}
+%a();;a();;c(ext:jpeg;mime:image)
+%\end{verbatim}
+%
+%\end{frame}
+%
+%
+%\begin{frame}[fragile]
+%\frametitle{Example: Bro\_Files Use Case}
+%We think inferred mime\_type should be tightly coupled with file extension (or vice versa?) \\
+%
+%\bigskip
+%
+%\begin{itemize}
+%\item Anecdoatal evidence \\
+%\item Unknown unknowns
+%\end{itemize}
+%\end{frame}
+%
+%
+%\begin{frame}[fragile]
+%\frametitle{Example:  Bro\_Files\_View Rules}
+%Identified the following rules and conditional probabilities: \\
+%\textcolor{gray}{Read as: ``antecedent implies consequent with confidence X}
+%\begin{verbatim}
+%[txt] => [text/plain], 0.961
+%[xml] => [application/xml], 0.999
+%[application/xml] => [xml], 1.0
+%[application/vnd.ms-pol] => [pol], 1.0
+%[pol] => [application/vnd.ms-pol], 0.989
+%[application/x-dosexec] => [dll], 0.999
+%[dll] => [application/x-dosexec], 1.0
+%\end{verbatim}
+%\end{frame}
+%
+%
+%\begin{frame}
+%\frametitle{Example:  Bro\_Files Findings}
+%
+%Rule: If application/x-dosexec, then extension '.dll' (99\%) \\
+%\smallskip
+%Breakage: A IP pulling down an x-dosexec filetype with a '.txt' file extension. \\
+%\bigskip
+%Note: This is a \textcolor{red}{starting point} for an investigation; rarely a standalone finding.
+%\end{frame}
+%
+%
+%\begin{frame}
+%\frametitle{Where Can I Get One?}
+%\begin{enumerate}
+%\item Rules
+%\begin{itemize} 
+%\item Spark: frequent pattern mining module in MLlib 
+%\item R: arules package
+%\item Python: mlxtend.frequent\_patterns
+%\end{itemize}
+%\item Rule Checker: Write your own
+%\item Most Complex Rule: Write your own
+%\item Confidence baked in; R/Python have lift
+%\item Exception List: You are going to want one
+%\end{enumerate}
+%\end{frame}
+%
+%
+%\frame{\frametitle{Stengths and Limitations}
+%Strengths:
+%\begin{itemize}
+%\item Broad applicability
+%\item Explainability
+%\item Speed and scalability
+%\item Tuning is trivial
+%\end{itemize}
+%\pause \medskip
+%Weaknesses:
+%\begin{itemize}
+%\item High confidence rules are not automatically interesting
+%\item Categorical data/binning
+%\item Only identifies ``orthogonal outliers''
+%\item Does not handle multi-item consequents
+%\end{itemize}
+%}
+%
+%
+%% [ext:.json] => [mime:text/json]                | ext:.json;mime:application/x-dosexec 
+%
+%\frame{
+%\frametitle{}
+%IF \textcolor{red}{lunch time} THEN \textcolor{red}{not too many questions}?\\
+%\bigskip
+%\bigskip
+%nathandanneman [at] datamachines [dot] io
+%}
+
+\end{document}

@@ -1,0 +1,8 @@
+model{
+    for (i in 1:N){
+      x[i] ~ dnorm(mu, tau)
+    }
+    mu ~ dnorm(10, .01) 
+    tau <- pow(sigma,-2)
+    sigma ~ dnorm(5, 5)
+  }

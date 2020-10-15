@@ -1,0 +1,8 @@
+\frametitle{JAGS}
+JAGS: Just Another Gibbs Sampler\\
+\bigskip
+Handles figuring out the distribution(s) to sample from, and does the sampling. MAGIC\\
+
+\begin{verbatim}
+http://mcmc-jags.sourceforge.net/
+\end{verbatim}
