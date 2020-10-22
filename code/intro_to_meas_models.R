@@ -3,7 +3,7 @@
 ### created: Oct 15, 2020
 ### last edited: Oct 15, 2020
 
-# We'll use JAGS for this tutorial http://mcmc-jags.sourceforge.net/
+# We'll use JAGS for this tutorial: http://mcmc-jags.sourceforge.net/
 require(rjags)
 
 root <- "/Users/ndanneman/Documents/personal/gits/intro_to_measurment_models"
@@ -11,7 +11,9 @@ root <- "/Users/ndanneman/Documents/personal/gits/intro_to_measurment_models"
 # JAGS lets you pretty freely specify a complex Bayesian model
 # It figures out the sampling distributions, and generates samples
 
-## Example 1: Bayesian means
+
+################################## 
+### Example 1: Bayesian means
 
 # Suppose we have some iid measurements. 
 # What is the mean and sd of the distribution from which this data was drawn?
@@ -66,6 +68,8 @@ out <- jags.samples(jags,
 is.list(out)  # TRUE
 names(out) # tracks the parameters we asked
 # we can obtain mean values simply:
+dim(out$mu) # ARRAY of shape: parameters X iterations X chains
+# but if you just call it, you get the average
 out$mu
 
 # ALL values in 'out' are legit samples from posteriors
@@ -92,7 +96,9 @@ abline(v=mean(mu_est), col="blue", lwd=3)
 legend("topleft", col=c("red", "blue"), legend = c("ML", "Bayesian"), lty=c(1,1), lwd=3)
 
 
-### So, priors, how do you choose them? Where do they come from? Do they matter?
+#############################################
+### RE: Priors
+# So, priors, how do you choose them? Where do they come from? Do they matter?
 # Note: Frequentist methods have an implied prior -- there's no getting around "picking one"
 # They can be extremely vague/uninformative/flat.
 # They can encode SME expertise.
@@ -154,6 +160,7 @@ mlow <- jags.samples(jags,
                         c('mu', 'tau', 'sigma'),
                         1000)
 
+# Some footwork to visualize the data, various priors and mean(posteriors)
 hist(x, xlim=c(-3, 15), freq=FALSE)
 # prior = N(10, 4)
 prior_dat <- rnorm(1000, 10, 4)
@@ -173,6 +180,9 @@ abline(v=mean(x), lwd=3, col="red", lty=2)
 legend("topleft", col=c("magenta", "orange", "blue", "red"), 
        legend = c("Reasonable", "Diffuse", "Low", "ML"), lty=c(1,1, 1, 2), lwd=3)
 
+
+##############################################################
+### Quick Chat: Why do Bayesian stuff, again?
 
 ### OK, so we've learned how to estimate a mean in a Bayesian setting. Cool.
 ### The reasons to go Bayesian are: 
@@ -200,7 +210,9 @@ cat(
 )
 
 
+#################################################
 ### Measurement Models
+
 # In a measurement model, we presume a latent variable exists.
 # We also presume it causes some observables
 
@@ -211,7 +223,7 @@ cat(
 
 # Let's simulate some data like this:
 n_questions <- 10
-n_students <- 30
+n_students <- 10
 latent_aptitude <- rnorm(n_students, 0, 1)
 per_question_difficulty <- rnorm(n_questions, 0, 1.5)
 per_question_discrimination <- runif(n_questions, .4, 1.2)
@@ -232,12 +244,15 @@ cat(
   "model{
     for (i in 1:n_students){
       for (j in 1:n_questions){
+        
         # we think each cell in our matrix is distributed bernoulli
         outcomes[i,j] ~ dbern(pr[i,j])
+        
         # the probability is the logit of...
         # ... student-specific aptitude (row fixed effects) ...
         # ... and question-specific discr and diff (col fixed effects)
         logit(pr[i,j]) <- aptitude[i] * discr[j] + diff[j]
+        # note: logit == exp(x) / (1+exp(x))
       }
     }
     # let's use a for-loop to add priors on aptitude 
@@ -246,7 +261,7 @@ cat(
     }
     # similar trick for discr and diff
     for (j in 1:n_questions){
-      discr[j] ~ dnorm(1,1)
+      discr[j] ~ dnorm(1,1) # note, discr should be positive!!
       diff[j] ~ dnorm(0,1)
     }
   
@@ -273,7 +288,7 @@ mod <- jags.samples(jags,
                     1000)
 
 # reminder: outputs are parameterShape X iterations X chains
-dim(mod$aptitude)  # 10 students X 1000 iterations X 3 chains
+dim(mod$aptitude)  # N students X 1000 iterations X 3 chains
 
 # Latent aptitude should correlate with our specified latent aptitude
 plot(latent_aptitude, apply(mod$aptitude, 1, median),
@@ -293,15 +308,29 @@ est_discr <- apply(mod$discr, 1, median)
 xb <- possible_apt*est_discr[1] + est_diff[1]
 pr <- exp(xb) / (1+exp(xb))
 plot(possible_apt, pr, type="l", lwd=2, ylim=c(0,1),
-     xlab = "Range of Aptitudes",
+     xlab = "Plausible Range of Aptitudes",
      ylab = "pr(correct)")
+rug(apply(mod$aptitude, 1, median))
 
-for (i in 2:n_questions){
+for (i in 2:min(n_questions, 10)){
   xb <- possible_apt*est_discr[i] + est_diff[i]
   pr <- exp(xb) / (1+exp(xb))
   points(possible_apt, pr, type="l", lwd=2, col=i)
 }
   
+## Ok, so how different are our fancy measurement model predictions than simpler ones?
+## Simpler = more or different assumptions? Or both?
+## assume all questions have same diff and perfectly discr: classical test theory
+## guess at the relative difficulty of questions: questions with different "point values" 
+##   (i.e. an index)
+## try to infer everything: measurement model
+simple_average_score <- apply(outcomes, 1, mean)
+modeled_aptitude <- apply(mod$aptitude, 1, median)
+plot(simple_average_score, modeled_aptitude,
+     xlab="Simple Average Scoring", ylab="Modeled Aptitude")
+## Better question: In what cases might these be different?
+
+
 
 # TODO: Example or discussion of identificaiton. Scale and rotational invariance.
 
