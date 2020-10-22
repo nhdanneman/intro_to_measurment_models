@@ -1,8 +1,14 @@
-model{
+
+    # opens with the 'model' and open-brace
+    model{
+    # observations drawn from normal distribution with mean and precision
     for (i in 1:N){
       x[i] ~ dnorm(mu, tau)
     }
-    mu ~ dnorm(10, .01) 
+    # prior on the mean
+    mu ~ dnorm(10, .5) 
+    # deterministic link (arrow, not tildea)
     tau <- pow(sigma,-2)
+    # prior on sigma
     sigma ~ dnorm(5, 5)
   }
