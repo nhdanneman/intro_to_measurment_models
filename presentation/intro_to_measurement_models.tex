@@ -40,7 +40,7 @@ Presumes:
 \frame{
 \frametitle{What is a Measurement Model?}
 
-Most broadly, measurement models are concerned with estimating latent variables from observed variables theorized to cause or be effected by those latent variables.\\
+Most broadly, measurement models are concerned with estimating latent variables from observed variables theorized to cause or be caused by those latent variables.\\
 \bigskip
 They are useful for quantifying concepts whose causes or consequences are observable/measurable, but that are not themselves measurable directly.\\
 \bigskip
@@ -105,11 +105,14 @@ Note: We may be centrally interested in $\eta$ and/or w, for inference over thes
 
 \frame{
 \frametitle{Bayesian Estimation, in Brief}
-In broad terms, Bayesian estimation involves multiplying the likelihood of seeing some data by a prior.\\
-\medskip
-Multiplication sounds easy, but both of those things are \textit{distributions}.\\
-\medskip
-Plus, they are complicated distributions over parameter estimates. This would mean taking difficult, or impossible, integrals.\\
+In broad terms, Bayesian estimation involves multiplying the likelihood of seeing some data, $P(X|\theta)$ by a prior likelihood of the parameter, $P(\theta)$.\\
+\bigskip
+
+$P(\theta|X) = \frac{P(X|\theta)P(\theta)}{P(X)}$
+
+\bigskip
+
+Solving for $P(\theta|X)$ analytically is often intractable in real cases. Also, we can re-normalize afterwards, so can frequently ignore $P(X)$.
 \medskip
 Instead, it's frequently possible to \textit{sample} from the \textit{marginal} distributions of parameters.
 
@@ -125,40 +128,42 @@ Idea: Given the data and estimates of all other values, sample from the distribu
 In practice, there are lots of better ways to do this, but that's what JAGS/BUGS does under the hood.
 }
 
-\frame{
-\frametitle{Workflow}
-The user specifies:
-\begin{itemize}
-\item Data
-\item Likelihoods (as distributions) and relationships between variables
-\item Priors for parameters
-\end{itemize}
-\bigskip
-User checks for convergence (more later).
-}
-
-
 \begin{frame}[fragile]
-\frametitle{JAGS}
-JAGS: Just Another Gibbs Sampler\\
-\bigskip
-Handles figuring out the distribution(s) to sample from, and does the sampling. MAGIC\\
+\frametitle{Estimating a Bayesian Model with JAGS}
 
+JAGS: Just Another Gibbs Sampler\\
+Handles figuring out the distribution(s) to sample from, and does the sampling. MAGIC!\\
 \begin{verbatim}
 http://mcmc-jags.sourceforge.net/
 \end{verbatim}
+
+\medskip
+Workflow:
+\begin{enumerate}
+\item Provide data
+\item Specify likelihoods (as distributions) and relationships between data and parameters
+\item Specify priors for parameters
+\item Retrieve samples from posterior distribution(s) of parameter(s) 
+\item Evaluate the samples, check for convergence
+\end{enumerate}
 \end{frame}
 
+
+
 \frame{
-\frametitle{}
-}\frame{
-\frametitle{}
-}\frame{
-\frametitle{}
+\frametitle{To The Code!}
+
 }
-\frame{
-\frametitle{}
-}
+
+
+%\frame{
+%\frametitle{}
+%}\frame{
+%\frametitle{}
+%}
+%\frame{
+%\frametitle{}
+%}
 
 %\frame{
 %\frametitle{Acknowledgements}
