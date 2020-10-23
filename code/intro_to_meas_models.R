@@ -1,7 +1,7 @@
 ### This script accompanies the "Intro to Measurement Models" Talk
 ### author: Nathan Danneman
 ### created: Oct 15, 2020
-### last edited: Oct 15, 2020
+### last edited: Oct 23, 2020
 
 # We'll use JAGS for this tutorial: http://mcmc-jags.sourceforge.net/
 require(rjags)
