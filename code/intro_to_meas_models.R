@@ -16,7 +16,7 @@ root <- "/Users/ndanneman/Documents/personal/gits/intro_to_measurment_models"
 ### Example 1: Bayesian means
 
 # Suppose we have some iid measurements. 
-# What is the mean and sd of the distribution from which this data was drawn?
+# What is the mean of the distribution from which this data was drawn?
 x <- c(3, 5, 9, 9, 12, 12)
 hist(x)
 
@@ -38,7 +38,7 @@ cat(
       x[i] ~ dnorm(mu, tau)
     }
     # prior on the mean
-    mu ~ dnorm(10, .5) 
+    mu ~ dnorm(10, .577) 
     # deterministic link (arrow, not tildea)
     tau <- pow(sigma,-2)
     # prior on sigma
