@@ -1,15 +1,14 @@
 ### This script accompanies the "Intro to Measurement Models" Talk
 ### author: Nathan Danneman
 ### created: Oct 15, 2020
-### last edited: Oct 23, 2020
+### last edited: Oct 26, 2020
 
 # We'll use JAGS for this tutorial: http://mcmc-jags.sourceforge.net/
+# JAGS lets you pretty freely specify a complex Bayesian model
+# It figures out the sampling distributions, and generates samples
 require(rjags)
 
 root <- "/Users/ndanneman/Documents/personal/gits/intro_to_measurment_models"
-
-# JAGS lets you pretty freely specify a complex Bayesian model
-# It figures out the sampling distributions, and generates samples
 
 
 ################################## 
@@ -39,10 +38,10 @@ cat(
     }
     # prior on the mean
     mu ~ dnorm(10, .577) 
-    # deterministic link (arrow, not tildea)
+    # deterministic link (arrow, not tilda)
     tau <- pow(sigma,-2)
     # prior on sigma
-    sigma ~ dnorm(5, 5)
+    sigma ~ dnorm(5, 1)
   }", file=paste0(root, "/code/models/mean.txt")
 )
 
@@ -83,7 +82,7 @@ hist(mu_est, main="Samples from Estimated Posterior Distribution")
 # get "stuck" in areas of low probability
 # models that are under-identified in terms of scale or rotation
 # Line graph, per chain, helps us tell if we got "good mixing" (~~ convergence check)
-plot(mu_est[,1], type="l")
+plot(mu_est[,1], type="l", xlab="iteration of sampler", ylab="value", main="Chains of Mu")
 points(mu_est[,2], type="l", col="red")
 points(mu_est[,3], type="l", col="blue")
 
@@ -92,7 +91,7 @@ points(mu_est[,3], type="l", col="blue")
 # So, did we get a reasonable estimate?
 hist(x)
 abline(v=ml_mean, col="red", lwd=3)
-abline(v=mean(mu_est), col="blue", lwd=3)
+abline(v=median(mu_est), col="blue", lwd=3)
 legend("topleft", col=c("red", "blue"), legend = c("ML", "Bayesian"), lty=c(1,1), lwd=3)
 
 
@@ -121,14 +120,10 @@ cat(
 
 N <- length(x)
 nchains=3
-# TODO: describe, comment this
 jags <- jags.model(file=paste0(root, "/code/models/mean_diffuse.txt"),
                    data=list(x=x, N=N),
                    n.chains=nchains, n.adapt=100)
-# TODO: what differntiaties this following from previous "adapt"
 update(jags, 2000)
-
-# TODO: what differentiates "samples" from "update" from "n.adapt"??
 iter <- 1000
 mdiffuse <- jags.samples(jags,
                     c('mu', 'tau', 'sigma'),
@@ -147,14 +142,10 @@ cat(
 
 N <- length(x)
 nchains=3
-# TODO: describe, comment this
 jags <- jags.model(file=paste0(root, "/code/models/mean_low.txt"),
                    data=list(x=x, N=N),
                    n.chains=nchains, n.adapt=100)
-# TODO: what differntiaties this following from previous "adapt"
 update(jags, 2000)
-
-# TODO: what differentiates "samples" from "update" from "n.adapt"??
 iter <- 1000
 mlow <- jags.samples(jags,
                         c('mu', 'tau', 'sigma'),
@@ -205,7 +196,7 @@ cat(
   b0 ~ dnorm(0, .1)
   b1 ~ dnorm(0, .1)
   tau <- pow(sigma,-2)
-  sigma ~ dnorm(5, 5)
+  sigma ~ dnorm(5, 2)
   }", file=paste0(root, "/code/models/OLS.txt")
 )
 
@@ -309,7 +300,8 @@ xb <- possible_apt*est_discr[1] + est_diff[1]
 pr <- exp(xb) / (1+exp(xb))
 plot(possible_apt, pr, type="l", lwd=2, ylim=c(0,1),
      xlab = "Plausible Range of Aptitudes",
-     ylab = "pr(correct)")
+     ylab = "pr(correct)",
+     main = "Aptitude, Questions, and Probabilistic Correctness")
 rug(apply(mod$aptitude, 1, median))
 
 for (i in 2:min(n_questions, 10)){

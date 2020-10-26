@@ -1,12 +1,15 @@
 model{
     for (i in 1:n_students){
       for (j in 1:n_questions){
+        
         # we think each cell in our matrix is distributed bernoulli
         outcomes[i,j] ~ dbern(pr[i,j])
+        
         # the probability is the logit of...
         # ... student-specific aptitude (row fixed effects) ...
         # ... and question-specific discr and diff (col fixed effects)
         logit(pr[i,j]) <- aptitude[i] * discr[j] + diff[j]
+        # note: logit == exp(x) / (1+exp(x))
       }
     }
     # let's use a for-loop to add priors on aptitude 
@@ -15,7 +18,7 @@ model{
     }
     # similar trick for discr and diff
     for (j in 1:n_questions){
-      discr[j] ~ dnorm(1,1)
+      discr[j] ~ dnorm(1,1) # note, discr should be positive!!
       diff[j] ~ dnorm(0,1)
     }
   
