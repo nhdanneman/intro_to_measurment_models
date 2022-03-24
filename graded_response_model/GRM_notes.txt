@@ -1,0 +1,22 @@
+This is a place to collate findings from the various GRM-related experiments in this repo.
+
+Question: How do you write an ordered-probit model?
+That is the backbone of GRM. You can see a tidy example in oprobit.py, lines 79-99.
+
+Question: What does a simple GRM look like?
+See grm.py for BUGS code and data generation. This simple variant includes
+detectors/questions/observables that all have the same number of levels.
+It uses fixed B0, fixed lowest threshold, and fixed sigma.
+
+Question: Can we handle a mix of binary and ordinal outcomes?
+This question arises because of how the oprobit GRM formulation works.
+There are three different ways probabilities are handled: 1) lowest level,
+2) intermediate level(s), and 3) highest level. So if there ARE NO intermediate
+levels, does the approach break? We try to solve by acting AS IF there is a third
+level for binary data, just with no observations of that outcome.
+See grm_with_twolevs.py.
+A: Empirically, this seems to work just fine.
+
+
+
+

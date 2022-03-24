@@ -46,7 +46,7 @@ cat(
 )
 
 N <- length(x)
-nchains=3
+nchains <- 3
 # We pass the model file, the data, the number of chains to run, and a short pre-burn-in to jags.model
 jags <- jags.model(file=paste0(root, "/code/models/mean.txt"),
                    data=list(x=x, N=N),
@@ -61,7 +61,7 @@ update(jags, 2000)
 iter <- 1000
 out <- jags.samples(jags,
                     c('mu', 'tau', 'sigma'),
-                    1000)
+                    iter)
 
 # out is a list, holding info on the parameters we asked it to track
 is.list(out)  # TRUE
@@ -213,8 +213,8 @@ cat(
 # Each question might be differently difficult and discriminating
 
 # Let's simulate some data like this:
-n_questions <- 10
-n_students <- 10
+n_questions <- 30
+n_students <- 30
 latent_aptitude <- rnorm(n_students, 0, 1)
 per_question_difficulty <- rnorm(n_questions, 0, 1.5)
 per_question_discrimination <- runif(n_questions, .4, 1.2)
@@ -273,10 +273,10 @@ update(jags, 2000)
 
 # This is MCMC sampling
 # We tell jags.samples which parameters to record into output
-iter <- 1000
+iter <- 3000
 mod <- jags.samples(jags,
                     c('aptitude', 'diff', 'discr'),
-                    1000)
+                    3000)
 
 # reminder: outputs are parameterShape X iterations X chains
 dim(mod$aptitude)  # N students X 1000 iterations X 3 chains
